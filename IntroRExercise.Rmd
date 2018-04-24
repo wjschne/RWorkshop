@@ -1,0 +1,122 @@
+---
+title: "Introduction to R"
+author: "W. Joel Schneider"
+date: "April 24, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load Packages
+
+```{r}
+library(tidyverse)
+library(psych)
+library(rio)
+library(broom)
+```
+
+# Import Data
+
+```{r}
+d <- import("https://github.com/wjschne/RWorkshop/raw/master/Data.csv")
+```
+
+# Descriptive Statistics
+
+```{r d, echo = TRUE}
+#overall Summary
+summary(d)
+# More complete descriptives (from psych package)
+describe(d)
+# Describe by groups (from psych package)
+describeBy(d,group = "Treatment")
+# Mean of a single variable
+mean(d$RC1)
+# Standard deviation
+sd(d$RC1)
+
+```
+
+# Analysis
+
+## Does reading comprehension at time 1 predict reading comprehension at time 2?
+
+```{r}
+m1 <- lm(RC2 ~ RC1, data = d)
+summary(m1)
+```
+
+## After controlling for reading comprehension, is treatment associated with higher reading comprehension at time 2?
+
+```{r}
+m2 <- lm(RC2 ~ RC1 + Treatment, data = d)
+summary(m2)
+```
+
+## Is the treatment effect stronger for students with initially lower reading comprehension?
+
+```{r}
+m3 <- lm(RC2 ~ RC1 * Treatment, data = d)
+summary(m3)
+```
+
+# Getting Started With Plots
+
+We use data.frame `d` and tell which variables are "mapped" onto which scales. Here, `RC1` is on the x-axis, and `RC2` is on the y-axis.
+
+```{r}
+ggplot(data = d, mapping = aes(x = RC1, y = RC2)) 
+# Shorter code
+ggplot(d, aes(RC1, RC2))
+```
+
+But the plot is empty! Let's add a new layer onto the plot using `geom_point`.
+
+```{r}
+ggplot(d, aes(RC1, RC2)) + 
+  geom_point()  
+```
+
+Not bad, but the plot does not make our point yet. We want to show the effect of treatment on the time 2 reading comprehension scores. Let's color the points by the treatment group variable.
+
+```{r}
+ggplot(d, aes(RC1, RC2, color = Treatment)) + 
+  geom_point()
+```
+
+Better, but it is still not easy to see what is going on. Let's add regression lines.
+
+```{r}
+ggplot(d, aes(RC1, RC2, color = Treatment)) + 
+  geom_point() + 
+  geom_smooth()
+```
+
+Cool! But those are loess regression lines, not the straight regression lines we are used to. We can use the `lm` (linear model) method:
+
+```{r}
+ggplot(d, aes(RC1, RC2, color = Treatment)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") 
+```
+
+Okay, let's extend both lines all the way across the plot:
+
+```{r}
+ggplot(d, aes(RC1, RC2, color = Treatment)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", fullrange = TRUE) 
+```
+
+Add some ellipses to make the point crystal clear:
+
+```{r}
+ggplot(d, aes(RC1, RC2, color = Treatment)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", fullrange = TRUE) + 
+  stat_ellipse()
+```
+
