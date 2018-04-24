@@ -5,13 +5,9 @@ date: "April 24, 2018"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 # Load Packages
 
-```{r}
+```{r setup, include=FALSE}
 library(tidyverse)
 library(psych)
 library(rio)
@@ -27,7 +23,7 @@ d <- import("https://github.com/wjschne/RWorkshop/raw/master/Data.csv")
 # Descriptive Statistics
 
 ```{r d, echo = TRUE}
-#overall Summary
+# Overall Summary
 summary(d)
 # More complete descriptives (from psych package)
 describe(d)
@@ -62,6 +58,13 @@ summary(m2)
 m3 <- lm(RC2 ~ RC1 * Treatment, data = d)
 summary(m3)
 ```
+
+## Compare models
+
+```{r}
+anova(m1,m2,m3) 
+```
+
 
 # Getting Started With Plots
 
