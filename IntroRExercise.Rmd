@@ -10,14 +10,13 @@ output: html_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(psych)
-library(rio)
 library(broom)
 ```
 
 # Import Data
 
 ```{r}
-d <- import("https://github.com/wjschne/RWorkshop/raw/master/Data.csv")
+d <- read_csv("https://github.com/wjschne/RWorkshop/raw/master/Data.csv")
 ```
 
 # Descriptive Statistics
